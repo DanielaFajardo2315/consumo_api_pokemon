@@ -5,34 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokédex</title>
 
-    <link rel="stylesheet" href="./style.css">
-    <script async src="./index.js"></script>
+    <link rel="stylesheet" href="./styles/style.css"> <!--Estilos propios-->
+    <script src="https://kit.fontawesome.com/b7908da02b.js" crossorigin="anonymous"></script> <!--Iconos-->
+    <script async src="./script/index.js"></script> <!--JavaScript-->
 </head>
 <body>
     <header>
-
+        <div class="caja_title">
+            <h1>POKEDEX</h1>
+            <img src="./img/logo.png" alt="Logo pokedex">
+        </div>
     </header>
     <main>
-        <h1 class="title">Titulo</h1>
-        <form id="form">
+        <form id="form"> <!--Lista desplegable-->
             <label for="lista">Seleccione un Pokemón</label>
             <select name="lista" id="lista">
-
             </select>
-            <button type="submit">Seleccionar</button>
+            <button type="submit">Añadir tarjeta</button>
         </form>
         <section id="tarjeta" class="seccion_pok">
-            <!-- <article class="card">
-                <h2 id="name_pokemon" class="card_title"></h2>
-                <div class="imgContainer">
-                    <img class="img_pokemon" src="" alt="" id="img_pokemon">
-                </div>
-            </article> -->
-        </section>
-
+        </section> <!--Sección para añadir tarjetas-->
     </main>
-    <footer>
-
-    </footer>
 </body>
 </html>

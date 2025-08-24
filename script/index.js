@@ -1,10 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     const listaPokemon = document.getElementById('lista'); //Lista desplegable (Select)
-    const infoPokemon = document.getElementById('tarjeta'); //Tarjeta con información del pokemon
-    const formulario = document.getElementById('form');
+    const infoPokemon = document.getElementById('tarjeta'); //Tarjeta con información del pokemón
+    const formulario = document.getElementById('form'); //Formulario de selección de pokemón
 
 
-    const peticionApi = async () => {
+    const peticionApi = async () => { //Función de petición de API
         try {
             const peticionLista = await fetch('https://pokeapi.co/api/v2/pokemon?limit=100&offset=0')
             const datosLista = await peticionLista.json();
@@ -27,29 +27,26 @@ document.addEventListener('DOMContentLoaded', () => {
             })
 
         } catch (error) {
-            console.error('Se encontró un error', error);
-            alert('Hay un error', error);
+            console.error('Se encontró el siguiente error', error);
+            alert('Ops!, hay un error al encontrar los datos');
         }
     }
 
 
-    const mostrarTarjeta = async (url) => {
+    const mostrarTarjeta = async (url) => { //Función para mostrar las tarjetas
         try {
-            const peticion = await fetch(url);
+            const peticion = await fetch(url); //Petición a las url de la API para encontrar datos del pokemón
             const datosPokemon = await peticion.json();
-            const imagenPokemon = datosPokemon.sprites.other.dream_world.front_default;
-            const namePokemon = datosPokemon.name;
-            const typePokemon = datosPokemon.types.map(tipo => tipo.type.name);
-            const locationsUrl = datosPokemon.location_area_encounters;
-            const locationRes = await fetch(locationsUrl);
+            const imagenPokemon = datosPokemon.sprites.other.dream_world.front_default; //Imagen del pokemón
+            const namePokemon = datosPokemon.name; //Nombre del pokemón
+            const typePokemon = datosPokemon.types.map(tipo => tipo.type.name); //Tipo de pokemón
+            const locationsUrl = datosPokemon.location_area_encounters; //Traer las url de las locaciones
+            const locationRes = await fetch(locationsUrl); //Petición a la url de las locaciones
             const location = await locationRes.json();
             const locationPokemon = await location.map(loc => loc.location_area);
             const locPokemon = locationPokemon.map(loc => loc.name);
-
-            console.log(locPokemon);
-            console.log(namePokemon);
-            console.log(imagenPokemon);
-            const colorTipo = {
+            
+            const colorTipo = { //Diccionario de los colores para los botones del tipo de pokemón
                 'bug': '#A8B820',
                 'dark': '#705848',
                 'dragon': '#7039F5',
@@ -69,50 +66,63 @@ document.addEventListener('DOMContentLoaded', () => {
                 'steel': '#B8B8D0',
                 'water': '#6C8CDC'
             }
-            const botonesTipo = typePokemon.map(tipo => {
+            const botonesTipo = typePokemon.map(tipo => { //Creación de los botones para tipo de pokemón con el color correspondiente
                 const color = colorTipo[tipo];
-                return `<button class="btn_type" style="background-color: ${color};">${tipo}</button>`;
+                return `<button class="btn_type" style="background-color: ${color}; text-transform: capitalize">${tipo}</button>`;
             }).join('');
-            const locationList = locPokemon.map(loc => {
+            const locationList = locPokemon.map(loc => { //Lista de locaciones donde se encuentran los pokemón
                 const locationP = locPokemon[loc];
                 return `<ul>
                 <li class="list_loc">${loc}</li>
                 </ul>`;
             }).join('');
-
+            const displayEvol = locationList.length === 0 ? 'block' : 'none'; //Condición variable para mostrar noEvolution
+            const noEvolution = `<li style="display: ${displayEvol};">Esta es una evolución</li>` //Item de la lista que se muestra si no encuentra locaciones
+            
             infoPokemon.innerHTML += `
                 <article class="card">
-                <h2 class="card_title">${namePokemon}</h2>
+                <button class="btn_eliminar"><i class="fa-solid fa-trash fa-2xl b_eliminar" style="color: #365ba1;"></i></button>
+                <h2 class="card_title" style="text-transform: capitalize";>${namePokemon}</h2>
                 <div class="imgContainer">
                 <img class="img_pokemon" src="${imagenPokemon}" alt="Imagen ${namePokemon}" id="img_pokemon">
                 </div>
-                <div>${botonesTipo}</div>
-                <div>
+                <div class="botones_tipo">${botonesTipo}</div>
+                <div class="location">
                 <h3>Locations</h3>
+                <div class="contenedor_lista">
                 <ul>
-                <li class="no_evolucion">Esta es una evolución</li>
+                ${noEvolution}
                 ${locationList}
                 </ul></div>
+                </div>
                 </article>
-                `
-            if (!locationList.length){
-                const evolucion = document.querySelector('.no_evolucion');
-                evolucion.style.display = 'block';
-            }
-
+                ` //Código HTML a ingresar al cumplir la función
+            
         } catch (error) {
-            console.error('hay un error', error);
+            console.error('Se encontró el siguiente error:', error);
+            alert('Ops!, hay un error al mostrar la tarjeta');
         }
     }
-
-    formulario.addEventListener('submit', (event) => {
+    
+    formulario.addEventListener('submit', (event) => { //Función para mostrar la tarjeta al seleccionar un pokemón
         event.preventDefault();
         const urlPokemon = listaPokemon.value;
-
+        
         if (urlPokemon) {
             mostrarTarjeta(urlPokemon);
         }
     })
-
+    
+    
+    infoPokemon.addEventListener('click', (event) => { //Función para eliminar una tarjeta
+        if (event.target.classList.contains('b_eliminar')) {
+            const card = event.target.closest('.card');
+            
+            if (card) {
+                card.remove();
+            }
+        }
+    })
+    
     peticionApi();
 });
